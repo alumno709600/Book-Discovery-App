@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  gap: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.container img {
+  height: 350px;
+  object-fit: cover;
+}
+
+.info {
+  max-width: 600px;
+}
