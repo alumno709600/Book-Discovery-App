@@ -1,16 +1,19 @@
 import styles from "./CategoryCard.module.css";
 
 interface Props {
-  label: string;
+  title: string;
+  description?: string;
   onClick: () => void;
 }
 
-const CategoryCard = ({ label, onClick }: Props) => {
+const CategoryCard = ({ title, description, onClick }: Props) => {
   return (
     <div className={styles.card} onClick={onClick}>
-      {label}
+      <h3>{title}</h3>
+      {description && <p>{description}</p>}
     </div>
   );
 };
 
 export default CategoryCard;
+

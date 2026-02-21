@@ -77,7 +77,7 @@ const SearchByGenre = () => {
         {popularGenres.map((g) => (
           <CategoryCard
             key={g}
-            label={g}
+            title={g}
             onClick={() => handleCardClick(g)}
           />
         ))}
