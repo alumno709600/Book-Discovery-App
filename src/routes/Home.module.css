@@ -4,7 +4,7 @@
 
 .hero {
   padding: 4rem 2rem;
-  background: #EFE7DD;
+  background: #d1c7bb;
   border-radius: 12px;
 }
 
@@ -37,13 +37,13 @@
 
 .features {
   margin-top: 3rem;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 2rem;
 }
 
 .features div {
-  background: white;
+  background: #d1c7bb;
   padding: 2rem;
   border-radius: 10px;
   flex: 1;

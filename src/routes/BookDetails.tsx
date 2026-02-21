@@ -1,67 +1,68 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getBookById } from "../services/GoogleBooksService";
-import type { Book } from "../types/Book";
+import { useState } from "react";
 import type { ReadingBook } from "../types/Book";
-import styles from "./BookDetails.module.css";
+import BookCard from "../components/BookCard";
+import Button from "../components/Button";
 
-const BookDetails = () => {
-  const { id } = useParams();
-  const [book, setBook] = useState<Book | null>(null);
-
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchBook = async () => {
-      const data = await getBookById(id);
-
-      const mapped: Book = {
-        id: data.id,
-        title: data.volumeInfo.title,
-        authors: data.volumeInfo.authors || [],
-        description: data.volumeInfo.description,
-        categories: data.volumeInfo.categories,
-        thumbnail: data.volumeInfo.imageLinks?.thumbnail,
-      };
-
-      setBook(mapped);
-    };
-
-    fetchBook();
-  }, [id]);
-
-  const addToReadingList = () => {
-    if (!book) return;
-
+const ReadingList = () => {
+  const [books, setBooks] = useState<ReadingBook[]>(() => {
     const stored = localStorage.getItem("readingList");
-    const list: ReadingBook[] = stored ? JSON.parse(stored) : [];
+    return stored ? JSON.parse(stored) : [];
+  });
 
-    const exists = list.find((b) => b.id === book.id);
-    if (exists) return;
+  const updateStatus = (id: string, status: ReadingBook["status"]) => {
+    const updated = books.map((book) =>
+      book.id === id ? { ...book, status } : book
+    );
 
-    const newBook: ReadingBook = { ...book, status: "To Read" };
-    const updated = [...list, newBook];
-
+    setBooks(updated);
     localStorage.setItem("readingList", JSON.stringify(updated));
-    alert("Book added to Reading List");
   };
 
-  if (!book) return <p>Loading...</p>;
+  const removeBook = (id: string) => {
+    const updated = books.filter((book) => book.id !== id);
+    setBooks(updated);
+    localStorage.setItem("readingList", JSON.stringify(updated));
+  };
+
+  if (books.length === 0) {
+    return <p>Your reading list is empty.</p>;
+  }
 
   return (
-    <div className={styles.container}>
-      <img src={book.thumbnail} alt={book.title} />
-      <div className={styles.info}>
-        <h2>{book.title}</h2>
-        <p><strong>Authors:</strong> {book.authors.join(", ")}</p>
-        <p><strong>Genres:</strong> {book.categories?.join(", ")}</p>
-        <p>{book.description}</p>
-        <button onClick={addToReadingList}>
-          Add to Reading List
-        </button>
-      </div>
+    <div>
+      <h2>My Reading List</h2>
+
+      {books.map((book) => (
+        <div key={book.id} style={{ marginBottom: "2rem" }}>
+          <BookCard book={book} />
+
+          <p><strong>Status:</strong> {book.status}</p>
+
+          <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+            <Button
+              text="To Read"
+              onClick={() => updateStatus(book.id, "To Read")}
+            />
+
+            <Button
+              text="Reading"
+              onClick={() => updateStatus(book.id, "Reading")}
+            />
+
+            <Button
+              text="Finished"
+              onClick={() => updateStatus(book.id, "Finished")}
+            />
+
+            <Button
+              text="Remove"
+              onClick={() => removeBook(book.id)}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default BookDetails;
+export default ReadingList;

@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import Button from "../components/Button";
+import CategoryCard from "../components/CategoryCard";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -9,33 +11,35 @@ const Home = () => {
       <section className={styles.hero}>
         <h1>Discover Your Next Favorite Book</h1>
         <p>
-          Explore books by genre or author and track your reading journey in a
-          calm and elegant environment.
+          Explore books by genre or author and track your reading journey
+          in a calm and elegant environment.
         </p>
 
-        <button onClick={() => navigate("/search/genre")}>
-          Start Exploring
-        </button>
+        <Button
+          text="Start Exploring"
+          onClick={() => navigate("/search/genre")}
+        />
       </section>
 
       <section className={styles.features}>
-        <div>
-          <h3>📚 Search by Genre</h3>
-          <p>Find books based on your favorite categories.</p>
-        </div>
+        <CategoryCard
+          label="📚 Search by Genre"
+          onClick={() => navigate("/search/genre")}
+        />
 
-        <div>
-          <h3>✍️ Search by Author</h3>
-          <p>Discover works from your preferred writers.</p>
-        </div>
+        <CategoryCard
+          label="✍️ Search by Author"
+          onClick={() => navigate("/search/author")}
+        />
 
-        <div>
-          <h3>🌿 Track Your Reading</h3>
-          <p>Organize books into To Read, Reading, and Finished.</p>
-        </div>
+        <CategoryCard
+          label="🌿 Track Your Reading"
+          onClick={() => navigate("/reading-list")}
+        />
       </section>
     </div>
   );
 };
 
 export default Home;
+
