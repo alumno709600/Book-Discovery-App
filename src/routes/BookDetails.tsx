@@ -1,68 +1,76 @@
-import { useState } from "react";
-import type { ReadingBook } from "../types/Book";
-import BookCard from "../components/BookCard";
-import Button from "../components/Button";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styles from "./BookDetail.module.css";
 
-const ReadingList = () => {
-  const [books, setBooks] = useState<ReadingBook[]>(() => {
-    const stored = localStorage.getItem("readingList");
-    return stored ? JSON.parse(stored) : [];
-  });
-
-  const updateStatus = (id: string, status: ReadingBook["status"]) => {
-    const updated = books.map((book) =>
-      book.id === id ? { ...book, status } : book
-    );
-
-    setBooks(updated);
-    localStorage.setItem("readingList", JSON.stringify(updated));
+interface GoogleBookDetail {
+  id: string;
+  volumeInfo: {
+    title: string;
+    authors?: string[];
+    description?: string;
+    imageLinks?: {
+      thumbnail?: string;
+    };
+    categories?: string[];
+    publishedDate?: string;
+    publisher?: string;
   };
+}
 
-  const removeBook = (id: string) => {
-    const updated = books.filter((book) => book.id !== id);
-    setBooks(updated);
-    localStorage.setItem("readingList", JSON.stringify(updated));
-  };
+const BookDetail = () => {
+  const { id } = useParams();
+  const [book, setBook] = useState<GoogleBookDetail | null>(null);
 
-  if (books.length === 0) {
-    return <p>Your reading list is empty.</p>;
-  }
+  useEffect(() => {
+    const fetchBook = async () => {
+      const res = await fetch(
+        `https://www.googleapis.com/books/v1/volumes/${id}`
+      );
+      const data: GoogleBookDetail = await res.json();
+      setBook(data);
+    };
+
+    if (id) fetchBook();
+  }, [id]);
+
+  if (!book) return <p>Loading...</p>;
+
+  const info = book.volumeInfo;
 
   return (
-    <div>
-      <h2>My Reading List</h2>
+    <div className={styles.container}>
+      <img
+        src={info.imageLinks?.thumbnail}
+        alt={info.title}
+      />
 
-      {books.map((book) => (
-        <div key={book.id} style={{ marginBottom: "2rem" }}>
-          <BookCard book={book} />
+      <div className={styles.details}>
+        <h1>{info.title}</h1>
+        <h3>{info.authors?.join(", ")}</h3>
 
-          <p><strong>Status:</strong> {book.status}</p>
+        <p>
+          <strong>Publisher:</strong> {info.publisher || "Unknown"}
+        </p>
 
-          <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
-            <Button
-              text="To Read"
-              onClick={() => updateStatus(book.id, "To Read")}
-            />
+        <p>
+          <strong>Published:</strong>{" "}
+          {info.publishedDate || "Unknown"}
+        </p>
 
-            <Button
-              text="Reading"
-              onClick={() => updateStatus(book.id, "Reading")}
-            />
+        <p>
+          <strong>Categories:</strong>{" "}
+          {info.categories?.join(", ") || "N/A"}
+        </p>
 
-            <Button
-              text="Finished"
-              onClick={() => updateStatus(book.id, "Finished")}
-            />
-
-            <Button
-              text="Remove"
-              onClick={() => removeBook(book.id)}
-            />
-          </div>
-        </div>
-      ))}
+        <p
+          dangerouslySetInnerHTML={{
+            __html: info.description || "No description available.",
+          }}
+        />
+      </div>
     </div>
   );
 };
 
-export default ReadingList;
+export default BookDetail;
+

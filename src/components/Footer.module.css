@@ -1,0 +1,18 @@
+.footer {
+  margin-top: 4rem;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #1e1e2f, #2c2c44);
+  color: #ffffff;
+  text-align: center;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.copy {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}

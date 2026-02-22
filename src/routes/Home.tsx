@@ -1,129 +1,139 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Home.module.css";
-import CategoryCard from "../components/CategoryCard";
+import type { Book } from "../types/Book";
+import BookGrid from "../components/BookGrid";
 import Button from "../components/Button";
+import styles from "./Home.module.css";
 
 const slides = [
   {
+    title: "Track Your Reading",
+    description:
+      "Organize books into To Read, Reading and Finished.",
+    buttonText: "Go to Reading List",
+    path: "/reading-list",
     image:
       "https://images.unsplash.com/photo-1512820790803-83ca734da794",
-    title: "Discover Stories That Stay With You",
-    text: "Explore books by genre or author in a calm and elegant space.",
-    action: "/search/genre",
-    button: "Start Exploring",
   },
   {
+    title: "Discover by Genre",
+    description:
+      "Explore thousands of books by category.",
+    buttonText: "Search by Genre",
+    path: "/genre",
     image:
       "https://images.unsplash.com/photo-1495446815901-a7297e633e8d",
-    title: "Build Your Personal Reading Journey",
-    text: "Track your books and organize your literary world.",
-    action: "/reading-list",
-    button: "Go to Reading List",
   },
   {
+    title: "Find Your Favorite Authors",
+    description:
+      "Search books written by your favorite authors.",
+    buttonText: "Search by Author",
+    path: "/author",
     image:
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
-    title: "Find Your Favorite and The Most Popular Authors",
-    text: "Discover works from writers you love.",
-    action: "/search/author",
-    button: "Search by Author",
+      "https://images.unsplash.com/photo-1524578271613-d550eacf6090",
   },
+];
+
+const famousQueries = [
+  "The Hobbit",
+  "1984",
+  "Pride and Prejudice",
+  "The Great Gatsby",
+  "Harry Potter",
+  "To Kill a Mockingbird",
+  "The Lord of the Rings",
+  "The Catcher in the Rye",
 ];
 
 const Home = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const [famousBooks, setFamousBooks] = useState<Book[]>([]);
 
-  // Auto slide
+  // Carrusel automático
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+      setCurrent((prev) =>
+        prev === slides.length - 1 ? 0 : prev + 1
+      );
     }, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const prevSlide = () => {
-    setCurrent((prev) =>
-      prev === 0 ? slides.length - 1 : prev - 1
-    );
-  };
+  // Fetch libros famosos con imagen real
+  useEffect(() => {
+    const fetchFamousBooks = async () => {
+      const results = await Promise.all(
+        famousQueries.map((query) =>
+          fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=${query}`
+          ).then((res) => res.json())
+        )
+      );
 
-  const nextSlide = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  };
+      const books: Book[] = results
+        .map((data) => {
+          const item = data.items?.[0];
+          if (!item) return null;
+
+          return {
+            id: item.id,
+            title: item.volumeInfo.title,
+            authors: item.volumeInfo.authors || [],
+            thumbnail:
+              item.volumeInfo.imageLinks?.thumbnail,
+          };
+        })
+        .filter(Boolean) as Book[];
+
+      setFamousBooks(books);
+    };
+
+    fetchFamousBooks();
+  }, []);
+
+  const slide = slides[current];
 
   return (
     <div className={styles.container}>
-      
-      {/* HERO CAROUSEL */}
-      <section className={styles.hero}>
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`${styles.slide} ${
-              index === current ? styles.active : ""
-            }`}
-            style={{ backgroundImage: `url(${slide.image})` }}
-          >
-            <div className={styles.overlay}>
-              <h1>{slide.title}</h1>
-              <p>{slide.text}</p>
-              <Button
-                text={slide.button}
-                onClick={() => navigate(slide.action)}
-              />
-            </div>
-          </div>
-        ))}
+      {/* ===== HERO CAROUSEL ===== */}
+      <section
+        className={styles.hero}
+        style={{ backgroundImage: `url(${slide.image})` }}
+      >
+        <div className={styles.overlay}>
+          <h1>{slide.title}</h1>
+          <p>{slide.description}</p>
 
-        {/* Controles */}
-        <button className={styles.prev} onClick={prevSlide}>
-          ‹
-        </button>
-        <button className={styles.next} onClick={nextSlide}>
-          ›
-        </button>
-
-        {/* Indicadores */}
-        <div className={styles.dots}>
-          {slides.map((_, index) => (
-            <span
-              key={index}
-              className={`${styles.dot} ${
-                index === current ? styles.dotActive : ""
-              }`}
-              onClick={() => setCurrent(index)}
-            />
-          ))}
+          <Button
+            text={slide.buttonText}
+            onClick={() => navigate(slide.path)}
+          />
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className={styles.features}>
-        <CategoryCard
-          title="📚 Search by Genre"
-          description="Find books based on your favorite categories."
-          onClick={() => navigate("/search/genre")}
-        />
+      {/* ===== FAMOUS BOOKS SECTION ===== */}
+      <section className={styles.booksSection}>
+        <h2>Famous Books</h2>
 
-        <CategoryCard
-          title="✍️ Search by Author"
-          description="Discover works from your preferred writers."
-          onClick={() => navigate("/search/author")}
-        />
-
-        <CategoryCard
-          title="🌿 Track Your Reading"
-          description="Organize books into To Read, Reading, and Finished."
-          onClick={() => navigate("/reading-list")}
-        />
+        {famousBooks.length > 0 ? (
+          <BookGrid books={famousBooks} />
+        ) : (
+          <p className={styles.loading}>
+            Loading featured books...
+          </p>
+        )}
       </section>
     </div>
   );
 };
 
 export default Home;
+
+
+
+
 
 
