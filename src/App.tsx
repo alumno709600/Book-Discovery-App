@@ -13,13 +13,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Home/>} />
           <Route path="search/genre" element={<SearchByGenre />} />
           <Route path="search/author" element={<SearchByAuthor />} />
           <Route path="book/:id" element={<BookDetails />} />
           <Route path="reading-list" element={<ReadingList />} />
-          <Route path="book/:id" element={<BookDetail />} />
-          
+          <Route path="book/:id" element={<BookDetail />} /> 
         </Route>
       </Routes>
       <Footer />

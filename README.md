@@ -1,73 +1,165 @@
-# React + TypeScript + Vite
+# 📚 Book Tracker App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React + TypeScript web application that allows users to discover books, search by genre or author, view detailed information, and manage a personal reading list with persistent storage.
 
-Currently, two official plugins are available:
+This project demonstrates reusable components, state management, routing, API integration, and local data persistence.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# 🚀 Features
+## 🏠 Home
 
-## React Compiler
+- Hero carousel with navigation to main sections
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Featured books fetched from Google Books API
 
-## Expanding the ESLint configuration
+- Reusable book cards
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🔎 Search by Genre
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Search books by category
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Dynamic results from Google Books API
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Add books to reading list
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ✍️ Search by Author
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Search books by specific authors
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Real-time API results
+
+- One-click add to reading list
+
+## 📖 Book Details
+
+- Detailed information page
+
+- Title, authors, description, and cover image
+
+## 📚 Reading List
+
+- Personal reading list management
+
+- Book status organization:
+
+- To Read
+
+- Reading
+
+- Finished
+
+- Change status dynamically
+
+- Remove books
+
+# 🛠️ Tech Stack
+
+- React
+
+- TypeScript
+
+- React Router
+
+- CSS Modules
+
+- Google Books API
+
+# 📂 Project Structure
+src/
+│
+├── components/
+│   ├── BookCard.tsx
+│   ├── BookGrid.tsx
+│   ├── Button.tsx
+│   ├── Footer.tsx
+│
+├── layout/
+│   └── MainLayout.tsx
+│
+├── routes/
+│   ├── Home.tsx
+│   ├── SearchByGenre.tsx
+│   ├── SearchByAuthor.tsx
+│   ├── BookDetails.tsx
+│   ├── ReadingList.tsx
+│
+├── types/
+│   └── Book.ts
+│
+├── App.tsx
+└── main.tsx
+
+# 🧠 Architecture Overview
+## Global State Management
+
+The reading list is managed in App.tsx using: useState<Book[]>
+
+Functions passed down as props: addBook, removeBook, updateStatus
+
+This centralizes state and keeps components reusable and clean.
+
+# ⚠️ API Rate Limiting
+
+The Google Books API has daily query limits.
+
+To avoid 429 Rate Limit Exceeded errors:
+The Home page uses a single API request
+
+React StrictMode behavior was considered during development
+
+The reading list is not locally stored (for the moment)
+
+# 🎯 Key Concepts Demonstrated
+
+- Functional React components
+
+- TypeScript interfaces and type safety
+
+- Lifting state up
+
+- Reusable UI components
+
+- Conditional rendering
+
+- Nested routing with React Router
+
+- API data mapping
+
+- Preventing duplicated state entries
+
+# 📦 Installation
+
+Clone the repository:
+
+git clone https://github.com/alumno709600/Book-Discovery-App.git
+
+Install dependencies:
+
+npm install
+
+Run development server:
+
+npm run dev
+
+Build for production:
+
+npm run build
+
+# 🔮 Future Improvements
+
+- Add authentication system
+
+- Backend integration (Node.js / Firebase)
+
+- Replace localStorage (is not implemented) with database storage
+
+- Implement pagination
+
+- Add search debouncing
+
+- Add book rating system
+
+- Add dark mode
+
+- Add testing (Jest / React Testing Library)
+
+- Use TanStack Query for API caching
